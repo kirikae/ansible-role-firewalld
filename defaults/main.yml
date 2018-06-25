@@ -1,0 +1,6 @@
+---
+# defaults file for Repositories/ansible-role-firewalld
+firewalld_disable: false
+firewalld_services: []
+firewalld_ports: []
+firewalld_rich_rules: []

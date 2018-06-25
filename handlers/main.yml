@@ -1,0 +1,4 @@
+---
+# handlers file for Repositories/ansible-role-firewalld
+- name: firewalld reload
+  command: firewalld-cmd --reload

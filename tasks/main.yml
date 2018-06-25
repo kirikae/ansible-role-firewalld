@@ -1,0 +1,53 @@
+---
+# tasks file for Repositories/ansible-role-firewalld
+- name: "Firewalld | Install firewalld package"
+  package:
+    name: firewalld
+    state: present
+
+- name: "Firewalld | Ensure firewalld service is enabled and started"
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+  when: firewalld_disable == false
+
+
+- name: "Firewalld | Ensure firewalld service is disabled and stopped"
+  service:
+    name: firewalld
+    state: stopped
+    enabled: false
+  when: firewalld_disable == true
+
+- name: "Firewalld | Services rules"
+  firewalld:
+    service: "{{ item.service }}"
+    zone: "{{ item.zone | default('public') }}"
+    permanent: "{{ item.permanent | default(true) }}"
+    state: "{{ item.state | default('enabled') }}"
+  notify: firewalld reload
+  when: firewalld_disable == false
+  with_items:
+    - "{{ firewalld_services }}"
+
+- name: "Firewalld | Ports rules"
+  firewalld:
+    port: "{{ item.port }}"
+    zone: "{{ item.zone | default('public') }}"
+    permanent: "{{ item.permanent | default(true) }}"
+    state: "{{ item.state | default('enabled') }}"
+  notify: firewalld reload
+  when: firewalld_disable == false
+  with_items:
+    - "{{ firewalld_ports }}"
+
+- name: "Firewalld | Rich rules"
+  firewalld:
+    rich_rule: "{{ item.rich_rule }}"
+    permanent: "{{ item.permanent | default(true) }}"
+    state: "{{ item.state | default('enabled') }}"
+  notify: firewalld reload
+  when: firewalld_disable == false
+  with_items:
+    - "{{ firewalld_rich_rule }}"
